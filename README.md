@@ -12,9 +12,10 @@ Below is a sample configuration for HAProxy on the client. The point of this is 
       balance leastconn
       option httpchk
       mode tcp
-        server node1 1.2.3.4:3306 check port 9200 inter 5000 fastinter 2000 rise 2 fall 2
-        server node2 1.2.3.5:3306 check port 9200 inter 5000 fastinter 2000 rise 2 fall 2
-        server node3 1.2.3.6:3306 check port 9200 inter 5000 fastinter 2000 rise 2 fall 2 backup
+        default-server port 9200 inter 2s downinter 5s rise 3 fall 2 
+        server node1 1.2.3.4:3306 check
+        server node2 1.2.3.5:3306 check
+        server node3 1.2.3.6:3306 check
 
 MySQL connectivity is checked via HTTP on port 9200. The clustercheck script is a simple shell script which accepts HTTP requests and checks MySQL on an incoming request. If the Mariadb Galera Cluster node is ready to accept requests, it will respond with HTTP code 200 (OK), otherwise a HTTP error 503 (Service Unavailable) is returned.
 
