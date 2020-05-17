@@ -1,5 +1,5 @@
 [Unit]
-Description=Percona XtraDB Cluster node check service
+Description=Mariadb Galera Cluster node check service
 
 [Service]
 ExecStart=-/usr/bin/clustercheck

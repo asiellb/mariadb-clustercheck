@@ -1,9 +1,9 @@
-## Percona Clustercheck ##
+## Mariadb Galera Clustercheck ##
 
-Script to make a proxy (ie HAProxy) capable of monitoring Percona XtraDB Cluster nodes properly.
+Script to make a proxy (ie HAProxy) capable of monitoring Mariadb Galera Cluster nodes properly.
 
 ## Usage ##
-Below is a sample configuration for HAProxy on the client. The point of this is that the application will be able to connect to localhost port 3307, so although we are using Percona XtraDB Cluster with several nodes, the application will see this as a single MySQL server running on localhost.
+Below is a sample configuration for HAProxy on the client. The point of this is that the application will be able to connect to localhost port 3307, so although we are using Mariadb Galera Cluster with several nodes, the application will see this as a single MySQL server running on localhost.
 
 `/etc/haproxy/haproxy.cfg`
 
@@ -16,7 +16,7 @@ Below is a sample configuration for HAProxy on the client. The point of this is 
         server node2 1.2.3.5:3306 check port 9200 inter 5000 fastinter 2000 rise 2 fall 2
         server node3 1.2.3.6:3306 check port 9200 inter 5000 fastinter 2000 rise 2 fall 2 backup
 
-MySQL connectivity is checked via HTTP on port 9200. The clustercheck script is a simple shell script which accepts HTTP requests and checks MySQL on an incoming request. If the Percona XtraDB Cluster node is ready to accept requests, it will respond with HTTP code 200 (OK), otherwise a HTTP error 503 (Service Unavailable) is returned.
+MySQL connectivity is checked via HTTP on port 9200. The clustercheck script is a simple shell script which accepts HTTP requests and checks MySQL on an incoming request. If the Mariadb Galera Cluster node is ready to accept requests, it will respond with HTTP code 200 (OK), otherwise a HTTP error 503 (Service Unavailable) is returned.
 
 ## Setup with xinetd ##
 This setup will create a process that listens on TCP port 9200 using xinetd. This process uses the clustercheck script from this repository to report the status of the node.
@@ -107,3 +107,38 @@ Note: You can also specify the username and password for the check in the **defa
 ## Manually removing a node from the cluster ##
 
 By touching /var/tmp/clustercheck.disabled, an admin may force clustercheck to return 503, regardless as to the actual state of the node. This is useful when the node is being put into maintenance mode.
+
+
+
+## Install CMDs
+
+- Download & systemd
+
+```bash
+wget https://github.com/asiellb/mariadb-clustercheck/archive/master.zip && unzip master.zip && rm -rf master.zip && cp mariadb-clustercheck-master/clustercheck /usr/bin/clustercheck && mkdir -p /usr/lib/systemd/system/ && cp mariadb-clustercheck-master/systemd/* /usr/lib/systemd/system/ 
+```
+
+
+
+- Mysqlcheck configuration
+
+```bash
+vim /etc/default/clustercheck
+```
+
+Set `clustercheck`config file, for example:
+
+```bash
+# Default settings for clustercheck.
+MYSQL_USERNAME=test
+MYSQL_PASSWORD=test.123
+```
+
+
+
+- Enable and start mysqlchk systemd
+
+```bash
+systemctl enable mysqlchk.socket && systemctl start mysqlchk.socket && rm -rf mariadb-clustercheck-master
+```
+
