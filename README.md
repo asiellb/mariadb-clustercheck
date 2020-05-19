@@ -116,7 +116,7 @@ By touching /var/tmp/clustercheck.disabled, an admin may force clustercheck to r
 - Download & systemd
 
 ```bash
-wget https://github.com/asiellb/mariadb-clustercheck/archive/master.zip && unzip master.zip && rm -rf master.zip && cp mariadb-clustercheck-master/clustercheck /usr/bin/clustercheck && mkdir -p /usr/lib/systemd/system/ && cp mariadb-clustercheck-master/systemd/* /usr/lib/systemd/system/ 
+wget https://github.com/asiellb/mariadb-clustercheck/archive/master.zip && unzip master.zip && rm -rf master.zip && yes | cp -rf mariadb-clustercheck-master/clustercheck /usr/bin/clustercheck && mkdir -p /usr/lib/systemd/system/ && yes | cp -rf mariadb-clustercheck-master/systemd/* /usr/lib/systemd/system/ 
 ```
 
 
@@ -133,6 +133,7 @@ Set `clustercheck`config file, for example:
 # Default settings for clustercheck.
 MYSQL_USERNAME=test
 MYSQL_PASSWORD=test.123
+AVAILABLE_WHEN_READONLY=0
 ```
 
 
